@@ -7,8 +7,7 @@ import java.util.Scanner;
 
 public class TigerApp {
     public static void main(String[] args) {
-        @SuppressWarnings("resource")
-		ApplicationContext context = new AnnotationConfigApplicationContext(TigerConfig.class);
+        ApplicationContext context = new AnnotationConfigApplicationContext(TigerConfig.class);
         TigerHabitat tigerHabitat = context.getBean(TigerHabitat.class);
 
         Scanner scanner = new Scanner(System.in);
@@ -21,6 +20,7 @@ public class TigerApp {
             System.out.println("4. Exit");
             System.out.print("Enter your choice: ");
             choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline character
 
             switch (choice) {
                 case 1:
@@ -33,7 +33,7 @@ public class TigerApp {
                     getTigerDetailsByType(tigerHabitat, scanner);
                     break;
                 case 4:
-                    System.out.println("Exiting the program.");
+                    System.out.println("Goodbye!");
                     break;
                 default:
                     System.out.println("Invalid choice. Please enter a valid option.");
@@ -46,10 +46,10 @@ public class TigerApp {
 
     private static void addTiger(TigerHabitat tigerHabitat, Scanner scanner) {
         System.out.print("Enter Tiger Type (Bengal/Siberian/Sumatran): ");
-        String type = scanner.next();
-        Tiger tiger = null;
+        String type = scanner.next().toLowerCase();
+        Tiger tiger;
 
-        switch (type.toLowerCase()) {
+        switch (type) {
             case "bengal":
                 tiger = new BengalTiger();
                 break;
@@ -64,31 +64,71 @@ public class TigerApp {
                 return;
         }
 
+        // Consume newline character
+        scanner.nextLine();
+
+        System.out.print("Enter Tiger Color: ");
+        String color = scanner.nextLine().trim();
+
+        System.out.print("Enter Average Weight: ");
+        double weight = Double.parseDouble(scanner.nextLine().trim());
+
+        System.out.print("Enter Preferred Climate: ");
+        String climate = scanner.nextLine().trim();
+
+        // Set the attributes for the tiger based on its type
+        tiger.setColor(color);
+        tiger.setAverageWeight(weight);
+        tiger.setPreferredClimate(climate);
+
         tigerHabitat.addTiger(tiger);
         System.out.println("Tiger added to the habitat.");
     }
 
+
     private static void listAllTigers(TigerHabitat tigerHabitat) {
         List<Tiger> allTigers = tigerHabitat.getAllTigers();
-        for (Tiger tiger : allTigers) {
-            System.out.println(tiger.getType());
+        if (allTigers.isEmpty()) {
+            System.out.println("No tigers in the habitat.");
+            return;
+        }
+        System.out.println("Tigers in the Habitat:");
+        for (int i = 0; i < allTigers.size(); i++) {
+            Tiger tiger = allTigers.get(i);
+            System.out.println((i + 1) + ". Type: " + tiger.getType() +
+                    ", Color: " + tiger.getColor() +
+                    ", Average Weight: " + tiger.getAverageWeight() + " kg" +
+                    ", Preferred Climate: " + tiger.getPreferredClimate());
         }
     }
 
     private static void getTigerDetailsByType(TigerHabitat tigerHabitat, Scanner scanner) {
-        System.out.print("Enter Tiger Type: ");
-        String type = scanner.next();
-        Tiger tiger = tigerHabitat.getTigerByType(type);
+        System.out.print("Enter Tiger Type (Bengal/Siberian/Sumatran): ");
+        String type = scanner.next().toLowerCase();
 
-        if (tiger != null) {
+        Tiger foundTiger = null;
+        for (Tiger tiger : tigerHabitat.getAllTigers()) {
+            if (tiger instanceof BengalTiger && type.equals("bengal")) {
+                foundTiger = tiger;
+                break;
+            } else if (tiger instanceof SiberianTiger && type.equals("siberian")) {
+                foundTiger = tiger;
+                break;
+            } else if (tiger instanceof SumatranTiger && type.equals("sumatran")) {
+                foundTiger = tiger;
+                break;
+            }
+        }
+
+        if (foundTiger != null) {
             System.out.println("Tiger Details:");
-            System.out.println("Type: " + tiger.getType());
-            System.out.println("Color: " + tiger.getColor());
-            System.out.println("Average Weight: " + tiger.getAverageWeight() + " kg");
-            System.out.println("Preferred Climate: " + tiger.getPreferredClimate());
+            System.out.println("Type: " + foundTiger.getType());
+            System.out.println("Color: " + foundTiger.getColor());
+            System.out.println("Average Weight: " + foundTiger.getAverageWeight() + " kg");
+            System.out.println("Preferred Climate: " + foundTiger.getPreferredClimate());
         } else {
             System.out.println("Tiger not found.");
         }
     }
-}
 
+}

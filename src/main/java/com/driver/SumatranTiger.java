@@ -1,6 +1,10 @@
 package com.driver;
 
 public class SumatranTiger implements Tiger {
+    private String color;
+    private double averageWeight;
+    private String preferredClimate;
+
     @Override
     public String getType() {
         return "Sumatran Tiger";
@@ -8,17 +12,31 @@ public class SumatranTiger implements Tiger {
 
     @Override
     public String getColor() {
-        return "Orange with thinner black stripes";
+        return color;
     }
 
     @Override
     public double getAverageWeight() {
-        return 140.0;
+        return averageWeight;
     }
 
     @Override
     public String getPreferredClimate() {
-        return "Tropical";
+        return preferredClimate;
+    }
+
+    @Override
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    @Override
+    public void setAverageWeight(double averageWeight) {
+        this.averageWeight = averageWeight;
+    }
+
+    @Override
+    public void setPreferredClimate(String preferredClimate) {
+        this.preferredClimate = preferredClimate;
     }
 }
-
